@@ -4,12 +4,13 @@ from flask_security import Security, SQLAlchemyUserDatastore
 from application.config import LocalDevelopmentConfig
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__ , template_folder="../frontend_cdn/" , static_folder="../frontend_cdn")
+    print(app.static_folder)
     app.config.from_object(LocalDevelopmentConfig)
     db.init_app(app)
     
     datastore = SQLAlchemyUserDatastore(db, User, Role)
-    app.security = Security(app, datastore = datastore  )
+    app.security = Security(app, datastore = datastore , register_blueprint=False )
     app.app_context().push()
     return app
 
@@ -20,3 +21,4 @@ from application.routes import *
 
 if __name__ == "__main__":
     app.run(debug=True)
+

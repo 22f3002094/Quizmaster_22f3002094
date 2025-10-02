@@ -11,8 +11,8 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean, default=True)
     fs_uniquifier = db.Column(db.String, unique=True, nullable=False)
     roles = db.relationship("Role", secondary="user_roles", backref="users")
-
-
+    def hello(self):
+        return "hell"
 class Role(db.Model, RoleMixin):
     __tablename__ = "role"
     id = db.Column(db.Integer, primary_key=True)
@@ -24,3 +24,4 @@ class UserRoles(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
     role_id = db.Column(db.Integer, db.ForeignKey("role.id", ondelete="CASCADE"))
+
