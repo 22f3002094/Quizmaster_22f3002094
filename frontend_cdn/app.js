@@ -1,15 +1,14 @@
 
-import greeting from "./greeting.js"
-
-app = new Vue(
+import router from "./router.js"
+const app = new Vue(
     {
         "el" : "#vue_app",
         template :
         `
-        <greeting></greeting>
+        <div>
+        <router-view></router-view>
+        </div>
         `,
-        components:{
-            greeting
-        }
+        router:router
     }
 )
