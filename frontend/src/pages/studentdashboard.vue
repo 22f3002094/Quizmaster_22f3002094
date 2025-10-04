@@ -1,6 +1,8 @@
 <template>
     <div class="text-center">
-        <h2>Welcome {{ username }} to dashboard</h2>
+        <!-- navbar -->
+        <h2>Welcome {{ username }} to user dashboard</h2>
+        <!-- subjects -->
         
     </div>
 

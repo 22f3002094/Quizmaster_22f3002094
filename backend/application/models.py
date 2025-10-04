@@ -12,7 +12,7 @@ class User(db.Model,UserMixin):
     email=db.Column(db.String,unique=True, nullable = False)
     password=db.Column(db.String,unique=True, nullable = False)
     user_qualification=db.Column(db.String)
-    user_dob=db.Column(db.String,unique=True)
+    user_dob=db.Column(db.Date,unique=True)
     active = db.Column(db.Boolean, default=True)
     fs_uniquifier = db.Column(db.String,unique=True, nullable = False)
     roles = db.relationship("Role",backref="bearers", secondary = "user_roles")

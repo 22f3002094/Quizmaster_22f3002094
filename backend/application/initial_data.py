@@ -1,5 +1,5 @@
 from flask import current_app as app
-from .models import db
+from .models import db,Subject
 from flask_security import SQLAlchemyUserDatastore
 from flask_security import hash_password
 
@@ -23,6 +23,17 @@ with app.app_context():
         datastore.create_user(name="stud1" ,email = 'stud1@gmail.com', password = hash_password('pass'), roles = ['student'] )
     
     db.session.commit()
+    if Subject.query.count() == 0:
+        subjects = [
+            Subject(sub_name="Mathematics", sub_desc="All about numbers and equations"),
+            Subject(sub_name="Science", sub_desc="Explore the world of science"),
+            Subject(sub_name="History", sub_desc="Learn about historical events"),
+            Subject(sub_name="Geography", sub_desc="Study the Earth's landscapes"),
+            Subject(sub_name="Literature", sub_desc="Dive into classic and modern texts")
+        ]
+        db.session.bulk_save_objects(subjects)
+    
+        db.session.commit()
     print("Initial data created")
     
 

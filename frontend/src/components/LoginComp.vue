@@ -56,7 +56,11 @@ export default ({
                 const data = await response.json()
                 if (response.status === 200) {
                     localStorage.setItem("token", data.token);
-                    this.$router.push("/dashboard");
+                    if (data.role==="student")
+                        this.$router.push(`/student/dashboard`);
+                    else if (data.role==="admin"){
+                        this.$router.push(`/admin/dashboard`);
+                    }
                 }
                 else {
                     this.errorMessage = data.message

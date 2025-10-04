@@ -2,6 +2,7 @@ from flask import current_app as app
 from flask_security import verify_password,auth_required,roles_required,hash_password
 from flask import request,render_template
 from .models import db
+from datetime import datetime
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -18,7 +19,7 @@ def login():
             user= datastore.find_user(email = email)
             if user:
                 if verify_password(  pws , user.password):
-                    return {"token" : user.get_auth_token() , "message" : "login successful"} ,200
+                    return {"token" : user.get_auth_token() , "message" : "login successful" , "name" : user.name , "role":user.roles[0].name} ,200
                 else:
                     return {"message" : "incorrect password"} , 401
             else:
@@ -33,7 +34,13 @@ def register():
         name = request.json.get("name")
         email = request.json.get("email")
         password = request.json.get("password")
-        dob = request.json.get("dob")
+        dob = request.json.get("dob")  
+        print(dob)
+        print(type(dob))
+        dob=datetime.strptime(dob,"%Y-%m-%d")
+        print(dob)
+        print(type(dob))  
+        
         qual = request.json.get("qual")
         try:
             datastore = app.security.datastore
@@ -46,6 +53,7 @@ def register():
                 return {"message":"User already exists"} , 409
         except Exception as e:
             db.session.rollback()
+            print(e)
             return {"message" : "internal server error"} , 500
 
 @app.route("/dashboard/admin")
