@@ -34,6 +34,7 @@ with app.app_context():
         db.session.bulk_save_objects(subjects)
     
         db.session.commit()
+    
     print("Initial data created")
     
 

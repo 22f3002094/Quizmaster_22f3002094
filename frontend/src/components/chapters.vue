@@ -1,6 +1,6 @@
 <template>
     <div v-if="openform === true">
-        <subjectform @formhandler="handleformevent"></subjectform>
+        <chapterform @formhandler="handleformevent"></chapterform>
     </div>
     <div v-if="message" class="alert alert-primary" role="alert">
         {{ message }}
@@ -8,7 +8,7 @@
 
     <div class="card ms-5 me-5 mt-5 shadow-lg">
         <div class="card-header d-flex">
-            <h3>Subjects</h3>
+            <h3>{{subname}} - Chapters</h3>
 
             <button class="btn btn-primary ms-auto" @click="opentheform"><i class="bi bi-patch-plus"></i>
                 {{ openform ? "Close" : "Create" }}</button>
@@ -16,14 +16,13 @@
         <div class="card-body">
             <div class="row">
 
-                <div class="col-3  " v-for="sub in subjects" :key="sub.id">
+                <div class="col-3  " v-for="chap in chapters" :key="chap.id">
                     <div class="card mb-3">
                         <div class="card-body">
-                            <h5 class="card-title">{{ sub.name }}</h5>
+                            <h5 class="card-title">{{ chap.name }}</h5>
                             <div>
                                 <button class="btn btn-primary"><i class="bi bi-pen"></i></button>
-                                <button class="btn btn-primary ms-2 " @click="delsubject(sub.id)"><i class="bi bi-trash"></i></button> 
-                                <router-link :to="`/admin/subject/${sub.name}`" class="btn btn-primary ms-2">Go to chapter</router-link>
+                                <button class="btn btn-primary ms-2" @click="delchapter(chap.id)"><i class="bi bi-trash"></i></button> 
                             </div>
                         </div>
                     </div>
@@ -38,23 +37,23 @@
 
 </template>
 <script>
-import subjectform from './subjectform.vue';
+import chapterform from './chapterform.vue';
 export default ({
-    name: "SubjectsComp",
+    name: "ChaptersComp",
     data() {
         return {
-            subjects: [],
+            chapters: [],
             openform: false,
             message: "",
-            greetmessage : "Hello"
+            subname:""
 
         }
     },
     methods: {
-        async delsubject(id){
+        async delchapter(id){
             const token = localStorage.getItem("token")
             try{
-                const response = await fetch(`http://127.0.0.1:5000/api/subjects?id=${id}`, {
+                const response = await fetch(`http://127.0.0.1:5000/api/chapters?ch_id=${id}`, {
                     method: "DELETE",
                     headers: {
                         'Content-Type': 'application/json',
@@ -65,7 +64,7 @@ export default ({
                 const data = await response.json()
                 if(response.status==200){
                     this.message=data.message
-                    this.fetchsubject()
+                    this.fetchchapter()
                 }
                 else{
                     new Error()
@@ -95,12 +94,12 @@ export default ({
                 this.openform = false
                 this.message = "Something went wrong, Try again"
             }
-            this.fetchsubject()
+            this.fetchchapter()
 
         },
-        async fetchsubject() {
+        async fetchchapter() {
             const token = localStorage.getItem("token")
-            const response = await fetch("http://127.0.0.1:5000/api/subjects", {
+            const response = await fetch(`http://127.0.0.1:5000/api/chapters?sub_name=${this.subname}`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -109,7 +108,8 @@ export default ({
             },)
             const data = await response.json()
             if (response.status === 200) {
-                this.subjects = data
+                this.chapters = data
+                console.log(this.chapters)
             }
             else if (response.status === 401) {
                 this.$router.push('/login')
@@ -118,10 +118,11 @@ export default ({
         }
     },
     async mounted() {
-        this.fetchsubject()
+        this.subname = this.$route.params.subname
+        this.fetchchapter()
     },
     components: {
-        subjectform
+        chapterform
     }
 })
 

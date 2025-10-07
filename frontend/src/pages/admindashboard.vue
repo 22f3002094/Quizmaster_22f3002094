@@ -1,16 +1,14 @@
 <template>
     <div >
         <NavBar></NavBar>
-        <h2>Welcome {{ username }} to admin dashboard</h2>
-        <SubjectsComp></SubjectsComp>
         <!-- subjects -->
+        <router-view></router-view>
         
     </div>
 
 </template>
 <script>
 import NavBar from '../components/NavBar.vue';
-import SubjectsComp from '../components/subjects.vue';
 export default ({
     name: "LoginComp",
     data() {
@@ -24,7 +22,6 @@ export default ({
     },
     components:{
         NavBar,
-        SubjectsComp
     }
 
 })
