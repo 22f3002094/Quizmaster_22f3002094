@@ -25,7 +25,7 @@ class SubjectsAPI(Resource):
                 db.session.add(new_sub)
                 db.session.commit()
             
-                return {"message" :"Subject Created successfully"} ,200
+                return {"id": new_sub.sub_id , "name" : new_sub.sub_name , "desc" : new_sub.sub_desc} ,200
         
         except Exception as e:
             print(e)

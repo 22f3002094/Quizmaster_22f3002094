@@ -29,28 +29,8 @@ export default ({
     },
     methods: {
         async submit() {
-            console.log(this.formdata)
-            const token = localStorage.getItem("token")
-            try{
-                const response = await fetch("http://127.0.0.1:5000/api/subjects", {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authentication-Token': token
-                    },
-                    body: JSON.stringify(this.formdata)
-
-                },)
-                const data = await response.json()
-                console.log(data)
-
-                this.$emit("formhandler", response.status, data.message)
-            }
-            catch(e){
-                this.$emit("formhandler", 500, e.message)
-            }
-
-
+            this.$store.dispatch("createSubject" ,this.formdata)
+            this.$emit("closetheform")
         }
     }
 

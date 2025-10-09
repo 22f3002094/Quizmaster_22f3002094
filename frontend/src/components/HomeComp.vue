@@ -1,10 +1,13 @@
 <template>
     <div class="text-center">
         <h2>Welcome to QuizMaster</h2>
+      
         <div class="">
             <router-link to="/login" class="btn btn-primary me-2">Login</router-link>
             <button  @click="gotoregister" class="btn btn-primary">Register</button>
         </div>
+
+
     </div>
 
 </template>
@@ -16,14 +19,20 @@ export default ({
             formdata: {
                 email: "",
                 password: ""
-            }
+            },
+            
+
         }
     },
     methods:{
         gotoregister(){
             this.$router.push("/register");
-        }
-    }
+        },
+        
+    },
+  
+    
+
 
 })
 

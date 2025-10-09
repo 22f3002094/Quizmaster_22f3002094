@@ -1,9 +1,9 @@
 <template>
-    <div v-if="openform === true">
-        <subjectform @formhandler="handleformevent"></subjectform>
+    <div v-if="openform === true">  
+        <subjectform @closetheform="closetheform"></subjectform>
     </div>
-    <div v-if="message" class="alert alert-primary" role="alert">
-        {{ message }}
+    <div v-if="errorMessage.text" class="alert alert-primary" role="alert">
+        {{ errorMessage.text }}
     </div>
 
     <div class="card ms-5 me-5 mt-5 shadow-lg">
@@ -43,45 +43,34 @@ export default ({
     name: "SubjectsComp",
     data() {
         return {
-            subjects: [],
+            
             openform: false,
             message: "",
             greetmessage : "Hello"
 
         }
     },
+    computed:{
+        subjects(){
+            return this.$store.getters.allSubjects
+        },
+        errorMessage(){
+            return this.$store.getters.message
+        }
+    },
     methods: {
         async delsubject(id){
-            const token = localStorage.getItem("token")
-            try{
-                const response = await fetch(`http://127.0.0.1:5000/api/subjects?id=${id}`, {
-                    method: "DELETE",
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authentication-Token': token
-                    },
-
-                },)
-                const data = await response.json()
-                if(response.status==200){
-                    this.message=data.message
-                    this.fetchsubject()
-                }
-                else{
-                    new Error()
-                }
-
-
-            }
-            catch(e){
-                this.message="something went worng, try again"
-            }
+            this.$store.dispatch("deleteSubject" , id)
         },
 
         opentheform() {
             console.log("button clicked!!")
             this.openform = !this.openform
         },
+        closetheform(){
+            this.openform=false
+        },
+
         handleformevent(sc, msg) {
             if (sc === 200) {
                 this.openform = false
@@ -98,27 +87,10 @@ export default ({
             this.fetchsubject()
 
         },
-        async fetchsubject() {
-            const token = localStorage.getItem("token")
-            const response = await fetch("http://127.0.0.1:5000/api/subjects", {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authentication-Token': token
-                }
-            },)
-            const data = await response.json()
-            if (response.status === 200) {
-                this.subjects = data
-            }
-            else if (response.status === 401) {
-                this.$router.push('/login')
-            }
-
-        }
+        
     },
     async mounted() {
-        this.fetchsubject()
+        await this.$store.dispatch("fetchSubjects")
     },
     components: {
         subjectform
