@@ -10,7 +10,7 @@ class SubjectsAPI(Resource):
         subjects = Subject.query.all()
         subs = []
         for sub in subjects:
-            subs.append({"name" : sub.sub_name , "desc" : sub.sub_desc , "id":sub.sub_id})
+            subs.append({"name" : sub.sub_name , "description" : sub.sub_desc , "id":sub.sub_id})
         
         return subs,200
     
@@ -33,6 +33,32 @@ class SubjectsAPI(Resource):
             return {"message" : "internal server error"} , 500
             
         
+    def put(self):
+        id = request.args.get("id")
+        formdata= request.get_json()
+        try:
+            sub = Subject.query.filter_by(sub_id = id).first()
+
+            if sub:
+                if formdata.get("name"):
+                    if not  Subject.query.filter(Subject.sub_name.ilike( f"%{formdata.get("name")}%" )).first():
+                        sub.sub_name = formdata.get("name")
+                    else:
+                        return {"message" :"Subject already exist"} , 409
+                if formdata.get("description"):
+                    sub.sub_desc = formdata.get("description")
+                db.session.commit()
+                return {"message" :"Subject is updated"} , 200
+            else:
+                return {"message" :"Subject doesn't exist"} , 404
+        
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+            return {"message" : "internal server error"} , 500
+            
+        
+
     def delete(self):
         id = request.args.get("id")
         try:

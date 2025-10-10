@@ -1,17 +1,17 @@
 <template>
-    <div v-if="openform === true">  
-        <subjectform @closetheform="closetheform"></subjectform>
-    </div>
-    <div v-if="errorMessage.text" class="alert alert-primary" role="alert">
-        {{ errorMessage.text }}
+    <!-- <div v-if="openform === true">
+        <subjectform @formhandler="handleformevent"></subjectform>
+    </div> -->
+    <div v-if="message" class="alert alert-primary" role="alert">
+        {{ message }}
     </div>
 
     <div class="card ms-5 me-5 mt-5 shadow-lg">
         <div class="card-header d-flex">
             <h3>Subjects</h3>
 
-            <button class="btn btn-primary ms-auto" @click="opentheform"><i class="bi bi-patch-plus"></i>
-                {{ openform ? "Close" : "Create" }}</button>
+            <router-link to="create/subject" class="btn btn-primary ms-auto"><i class="bi bi-patch-plus"></i>
+Create</router-link>
         </div>
         <div class="card-body">
             <div class="row">
@@ -21,7 +21,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ sub.name }}</h5>
                             <div>
-                                <button class="btn btn-primary"><i class="bi bi-pen"></i></button>
+                                <button class="btn btn-primary" @click="editsubject(sub)"><i class="bi bi-pen"></i></button>
                                 <button class="btn btn-primary ms-2 " @click="delsubject(sub.id)"><i class="bi bi-trash"></i></button> 
                                 <router-link :to="`/admin/subject/${sub.name}`" class="btn btn-primary ms-2">Go to chapter</router-link>
                             </div>
@@ -38,63 +38,76 @@
 
 </template>
 <script>
-import subjectform from './subjectform.vue';
+
 export default ({
     name: "SubjectsComp",
     data() {
         return {
-            
+            subjects: [],
             openform: false,
             message: "",
             greetmessage : "Hello"
 
         }
     },
-    computed:{
-        subjects(){
-            return this.$store.getters.allSubjects
-        },
-        errorMessage(){
-            return this.$store.getters.message
-        }
-    },
     methods: {
         async delsubject(id){
-            this.$store.dispatch("deleteSubject" , id)
+            const token = localStorage.getItem("token")
+            try{
+                const response = await fetch(`http://127.0.0.1:5000/api/subjects?id=${id}`, {
+                    method: "DELETE",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authentication-Token': token
+                    },
+
+                },)
+                const data = await response.json()
+                if(response.status==200){
+                    this.message=data.message
+                    this.fetchsubject()
+                }
+                else{
+                    new Error()
+                }
+
+
+            }
+            catch(e){
+                this.message="something went worng, try again"
+            }
         },
 
-        opentheform() {
-            console.log("button clicked!!")
-            this.openform = !this.openform
-        },
-        closetheform(){
-            this.openform=false
-        },
-
-        handleformevent(sc, msg) {
-            if (sc === 200) {
-                this.openform = false
-                this.message = msg
-            }
-            else if (sc == 409) {
-                this.openform = false
-                this.message = msg
-            }
-            else if (sc == 500) {
-                this.openform = false
-                this.message = "Something went wrong, Try again"
-            }
-            this.fetchsubject()
+        editsubject(subject){
+            localStorage.setItem("subject" , JSON.stringify(subject))
+            this.$router.push({path:"edit/subject"  })
 
         },
+
         
+        async fetchsubject() {
+            const token = localStorage.getItem("token")
+            const response = await fetch("http://127.0.0.1:5000/api/subjects", {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authentication-Token': token
+                }
+            },)
+            const data = await response.json()
+            if (response.status === 200) {
+                this.subjects = data
+            }
+            else if (response.status === 401) {
+                this.$router.push('/login')
+            }
+
+        }
     },
     async mounted() {
-        await this.$store.dispatch("fetchSubjects")
+        this.fetchsubject()
     },
-    components: {
-        subjectform
-    }
+    
 })
 
 </script>

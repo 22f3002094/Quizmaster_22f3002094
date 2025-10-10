@@ -23,6 +23,7 @@
                             <div>
                                 <button class="btn btn-primary"><i class="bi bi-pen"></i></button>
                                 <button class="btn btn-primary ms-2" @click="delchapter(chap.id)"><i class="bi bi-trash"></i></button> 
+                                <router-link :to="`/admin/chapter/${chap.name}`" class="btn btn-primary ms-2">Go to Quizzes</router-link>
                             </div>
                         </div>
                     </div>

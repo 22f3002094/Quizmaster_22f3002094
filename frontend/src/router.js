@@ -7,6 +7,9 @@ import AdminDashboard from './pages/admindashboard.vue';
 import StudentDashboard from './pages/studentdashboard.vue';
 import Subjects from "./components/subjects.vue";
 import Chapters from "./components/chapters.vue";
+import Subjectform from "./components/subjectform.vue";
+import Quizes from "./components/quizes.vue";
+import Formquiz from "./components/formquiz.vue";
 const routes = [
     {path:"/", component: HomeComp},
     {path:"/login", component: login},
@@ -14,7 +17,11 @@ const routes = [
     {path:"/admin", component:AdminDashboard,
         children : [
             {path :"dashboard" ,  component: Subjects },
-            {path :"subject/:subname" , component : Chapters}
+            {path :"subject/:subname" , component : Chapters},
+            {path: "create/subject" , component : Subjectform },
+            {path: "edit/subject" , component : Subjectform },
+            {path: "chapter/:chapname" , component: Quizes},
+            {path: "create/quiz" , component : Formquiz },
 
         ]
         
