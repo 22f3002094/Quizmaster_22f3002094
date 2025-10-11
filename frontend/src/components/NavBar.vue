@@ -10,7 +10,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto me-5 fs-4 mb-2 mb-lg-0">
                     <li class="nav-item me-3">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <router-link :to="role==='admin'?'/admin/dashboard':'/student/dashboard'" class="nav-link active" aria-current="page" >Home</router-link>
                     </li>
                     <li class="nav-item me-3">
                         <a class="nav-link" href="#">Link</a>
@@ -21,7 +21,7 @@
                             <i class="bi bi-person"></i>
                         </a>
                         <ul class="dropdown-menu  dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
+                            <li><a class="dropdown-item" @click="logout">Logout</a></li>
                             
                         </ul>
                     </li>
@@ -38,9 +38,20 @@ export default ({
     name: "NavBar",
     data() {
         return {
-
+            role:""
         }
     },
+    methods:{
+        logout(){
+            localStorage.removeItem("token")
+            localStorage.removeItem("role")
+            this.$router.push("/login")
+        }
+    },
+    mounted(){
+        this.role = localStorage.getItem("role")
+    }
+
 
 })
 

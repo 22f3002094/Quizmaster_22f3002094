@@ -10,7 +10,7 @@
         <div class="card-header d-flex">
             <h3>{{subname}} - Chapters</h3>
 
-            <button class="btn btn-primary ms-auto" @click="opentheform"><i class="bi bi-patch-plus"></i>
+            <button v-if="role==='admin'"  class="btn btn-primary ms-auto" @click="opentheform"><i class="bi bi-patch-plus"></i>
                 {{ openform ? "Close" : "Create" }}</button>
         </div>
         <div class="card-body">
@@ -21,9 +21,9 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ chap.name }}</h5>
                             <div>
-                                <button class="btn btn-primary"><i class="bi bi-pen"></i></button>
-                                <button class="btn btn-primary ms-2" @click="delchapter(chap.id)"><i class="bi bi-trash"></i></button> 
-                                <router-link :to="`/admin/chapter/${chap.name}`" class="btn btn-primary ms-2">Go to Quizzes</router-link>
+                                <button v-if="role==='admin'" class="btn btn-primary"><i class="bi bi-pen"></i></button>
+                                <button v-if="role==='admin'" class="btn btn-primary ms-2" @click="delchapter(chap.id)"><i class="bi bi-trash"></i></button> 
+                                <router-link :to="`/student/chapter/${chap.name}`" class="btn btn-primary ms-2">Go to Quizzes</router-link>
                             </div>
                         </div>
                     </div>
@@ -46,7 +46,8 @@ export default ({
             chapters: [],
             openform: false,
             message: "",
-            subname:""
+            subname:"",
+            role:''
 
         }
     },
@@ -121,6 +122,8 @@ export default ({
     async mounted() {
         this.subname = this.$route.params.subname
         this.fetchchapter()
+        this.role = localStorage.getItem("role")
+
     },
     components: {
         chapterform

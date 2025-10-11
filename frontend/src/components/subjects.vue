@@ -10,7 +10,7 @@
         <div class="card-header d-flex">
             <h3>Subjects</h3>
 
-            <router-link to="create/subject" class="btn btn-primary ms-auto"><i class="bi bi-patch-plus"></i>
+            <router-link v-if="role==='admin'" to="create/subject" class="btn btn-primary ms-auto"><i class="bi bi-patch-plus"></i>
 Create</router-link>
         </div>
         <div class="card-body">
@@ -21,9 +21,9 @@ Create</router-link>
                         <div class="card-body">
                             <h5 class="card-title">{{ sub.name }}</h5>
                             <div>
-                                <button class="btn btn-primary" @click="editsubject(sub)"><i class="bi bi-pen"></i></button>
-                                <button class="btn btn-primary ms-2 " @click="delsubject(sub.id)"><i class="bi bi-trash"></i></button> 
-                                <router-link :to="`/admin/subject/${sub.name}`" class="btn btn-primary ms-2">Go to chapter</router-link>
+                                <button v-if="role==='admin'" class="btn  btn-primary" @click="editsubject(sub)"><i class="bi bi-pen"></i></button>
+                                <button v-if="role==='admin'" class="btn btn-primary ms-2 " @click="delsubject(sub.id)"><i class="bi bi-trash"></i></button> 
+                                <router-link :to="`subject/${sub.name}`" class="btn btn-primary ms-2">Go to chapter</router-link>
                             </div>
                         </div>
                     </div>
@@ -46,7 +46,8 @@ export default ({
             subjects: [],
             openform: false,
             message: "",
-            greetmessage : "Hello"
+            greetmessage : "Hello",
+            role:''
 
         }
     },
@@ -105,6 +106,7 @@ export default ({
         }
     },
     async mounted() {
+        this.role = localStorage.getItem("role")
         this.fetchsubject()
     },
     

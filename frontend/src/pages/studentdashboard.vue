@@ -1,24 +1,27 @@
 <template>
-    <div class="text-center">
-        <!-- navbar -->
-        <h2>Welcome {{ username }} to user dashboard</h2>
-        <!-- subjects -->
-        
+    <div >
+        <NavBar></NavBar>
+        <router-view></router-view>
+
     </div>
 
 </template>
 <script>
+import NavBar from '@/components/NavBar.vue';
 export default ({
     name: "LoginComp",
     data() {
         return {
-            
-            username:"",
-            userrole:""
+
+            username: "",
+            userrole: ""
         }
     },
-    mounted(){
+    mounted() {
     },
+    components: {
+        NavBar
+    }
 
 })
 

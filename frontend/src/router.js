@@ -10,6 +10,7 @@ import Chapters from "./components/chapters.vue";
 import Subjectform from "./components/subjectform.vue";
 import Quizes from "./components/quizes.vue";
 import Formquiz from "./components/formquiz.vue";
+import QuizAttemp from "./components/quizAttemp.vue";
 const routes = [
     {path:"/", component: HomeComp},
     {path:"/login", component: login},
@@ -21,12 +22,19 @@ const routes = [
             {path: "create/subject" , component : Subjectform },
             {path: "edit/subject" , component : Subjectform },
             {path: "chapter/:chapname" , component: Quizes},
-            {path: "create/quiz" , component : Formquiz },
+            {path: ":chapname/create/quiz" , component : Formquiz },
 
         ]
         
     },
-    {path:"/student/dashboard", component:StudentDashboard}
+    {path:"/student", component:StudentDashboard,
+        children:[
+            {path:'dashboard' , component:Subjects},
+            {path :"subject/:subname" , component : Chapters},
+            {path: "chapter/:chapname" , component: Quizes},
+            {path:"attemptquiz/:quizid" , component:QuizAttemp}
+        ]
+    }
 ]
 
 

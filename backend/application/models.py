@@ -51,13 +51,10 @@ class Quiz(db.Model):
     quiz_id= db.Column(db.Integer, primary_key=True, autoincrement= True)
     ch_id = db.Column(db.Integer, db.ForeignKey("chapter.ch_id"))
     quiz_date = db.Column(db.String)
-    quiz_duration = db.Column(db.String)
-    quiz_remarks = db.Column(db.String)
     quiz_name = db.Column(db.String, nullable = False)
     questions =db.relationship("Questions",backref="quiz", cascade='all, delete-orphan')
     scores =db.relationship("Scores",backref="quiz", cascade='all, delete-orphan')
     total_marks = db.Column(db.Integer)
-    
 
 class Questions(db.Model):
     __tablename__='questions'

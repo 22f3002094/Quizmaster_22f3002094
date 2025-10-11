@@ -1,5 +1,5 @@
 from flask import current_app as app
-from .models import db,Subject
+from .models import db,Subject,Chapter
 from flask_security import SQLAlchemyUserDatastore
 from flask_security import hash_password
 
@@ -32,6 +32,15 @@ with app.app_context():
             Subject(sub_name="Literature", sub_desc="Dive into classic and modern texts")
         ]
         db.session.bulk_save_objects(subjects)
+    
+        db.session.commit()
+    if Chapter.query.count() == 0:
+        chapters = [
+            Chapter(ch_name="Integers", ch_desc="All about integer numbers" , sub_id=1),
+            Chapter(ch_name="Real Numbers", ch_desc="All about Real numbers", sub_id=1),
+            
+        ]
+        db.session.bulk_save_objects(chapters)
     
         db.session.commit()
     
