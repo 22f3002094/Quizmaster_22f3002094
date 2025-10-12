@@ -3,6 +3,8 @@ from flask_security import verify_password,auth_required,roles_required,hash_pas
 from flask import request,render_template
 from .models import db
 from datetime import datetime
+from .task import test_task
+from celery.result import AsyncResult
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -61,3 +63,25 @@ def register():
 @roles_required('student')
 def admin_route():
     return "welcome to admin dashboard"
+
+
+
+@app.route("/first-task")
+def first_task():
+    result = test_task.delay()
+    
+    return {"task_id" : result.id} 
+
+@app.route("/check-first-task/<id>")
+def check_first_task(id):
+    if id:
+        # taskid = request.args.get("task_id")
+        result =AsyncResult(id)
+        return { 
+            "ready" : result.ready(),
+            "succesful" : result.successful(),
+            "result" : result.result if result.ready() else None
+        }
+    
+    else:
+        return {"message" :"provide the task id"}
