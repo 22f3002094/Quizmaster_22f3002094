@@ -1,9 +1,9 @@
 from flask import current_app as app
 from flask_security import verify_password,auth_required,roles_required,hash_password
-from flask import request,render_template
+from flask import request,render_template , send_from_directory
 from .models import db
 from datetime import datetime
-from .task import test_task
+from .task import test_task , csv_down_ad
 from celery.result import AsyncResult
 @app.route("/")
 def home():
@@ -85,3 +85,23 @@ def check_first_task(id):
     
     else:
         return {"message" :"provide the task id"}
+
+
+
+
+@app.route("/api/admin_export_csv")
+def admin_export_csv():
+    result = csv_down_ad.delay()
+    
+    return {"task_id" : result.id} 
+
+
+@app.route("/api/check_admin_export_csv")
+def check_admin_export_csv():
+    if request.args.get("taskid"):
+        result = AsyncResult(request.args.get("taskid"))
+        
+        if not result.ready():
+            return {"message" : "Retry"} , 404
+        else:
+            return send_from_directory("./static" , path = result.result ) , 200 
