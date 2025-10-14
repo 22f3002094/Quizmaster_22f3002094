@@ -1,9 +1,10 @@
 from celery import shared_task
 import time
-from .models import db, Subject
+from .models import db, Subject,User, Role,Quiz
 import csv
 import os 
-
+from .utils import prepare_temp
+from .mail import send_email
 @shared_task(name = "test task" )
 def test_task():
     time.sleep(30)
@@ -25,3 +26,40 @@ def csv_down_ad():
     
 
     return filename
+
+@shared_task(name="admin monthly report ")
+def admin_monthly_report():
+    
+    subs =Subject.query.all()
+
+    ad = Role.query.filter_by(name="admin").first().bearers[0]
+    data = {"username" :ad.name , "subjects" : subs}
+    output_temp = prepare_temp("./templates/adminmail.html" ,data)
+    send_email(ad.email , "Monthly Report " , output_temp)
+    return "Mail Sent"
+    
+
+@shared_task(name="user monthly report ")
+def user_monthly_report():
+    
+    subs =Subject.query.all()
+
+    users = Role.query.filter_by(name="student").first().bearers
+    for user in users:
+        data = {"username" :user.name , "subjects" : subs}
+        output_temp = prepare_temp("./templates/adminmail.html" ,data)
+        send_email(user.email , "Monthly Report " , output_temp)
+    return "Mail Sent"
+
+@shared_task(name="quiz alert report ")
+def Quiz_alert(quiz_id):
+    
+    quiz =Quiz.query.filter_by(quiz_id = quiz_id).first()
+    
+
+    users = Role.query.filter_by(name="student").first().bearers
+    for user in users:
+        data = {"username" :user.name , "quiz" : quiz}
+        output_temp = prepare_temp("./templates/quizalert.html" ,data)
+        send_email(user.email , "One quiz awaits you" , output_temp)
+    return "Mail Sent"

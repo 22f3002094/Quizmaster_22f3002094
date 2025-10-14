@@ -5,7 +5,8 @@ from application.config import LocalDevelopmentConfig
 from flask_cors import CORS
 from application.celery_init import celery_init_app
 from celery.schedules import crontab
-from application.task import csv_down_ad
+from application.task import csv_down_ad,admin_monthly_report,user_monthly_report
+from application.cache import cache
 
 from application.api import api
 def create_app():
@@ -15,7 +16,7 @@ def create_app():
     db.init_app(app)
     CORS(app)
     api.init_app(app)
-    
+    cache.init_app( app)
 
     
     datastore = SQLAlchemyUserDatastore(db, User, Role)
@@ -52,8 +53,18 @@ def setup_periodic_tasks(sender, **kwargs):
         csv_down_ad.s() ,
         name="generating admin csv"
     )
-
-    
+    sender.add_periodic_task(
+        crontab(day_of_month='14', hour=5, minute=46),
+        admin_monthly_report.s(),
+        name = "monthlyreport admin"
+    )
+    sender.add_periodic_task(
+        crontab(day_of_month='14', hour=5, minute=46),
+        user_monthly_report.s(),
+        name = "monthlyreport user"
+    )
+#celery -A app.celery worker --loglevel INFO
+#celery -A app.celery beat --loglevel INFO
 
 if __name__ == "__main__":
     app.run(debug=True)

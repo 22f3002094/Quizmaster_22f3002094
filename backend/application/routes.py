@@ -5,6 +5,7 @@ from .models import db
 from datetime import datetime
 from .task import test_task , csv_down_ad
 from celery.result import AsyncResult
+from .cache import cache
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -90,6 +91,7 @@ def check_first_task(id):
 
 
 @app.route("/api/admin_export_csv")
+@cache.cached()
 def admin_export_csv():
     result = csv_down_ad.delay()
     

@@ -17,7 +17,7 @@
 <script>
 import NavBar from '../components/NavBar.vue';
 export default ({
-    name: "LoginComp",
+    name: "AdminDashComp",
     data() {
         return {
 

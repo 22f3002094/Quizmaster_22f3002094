@@ -3,7 +3,7 @@ api = Api()
 from .models import *
 from flask_security import auth_required,roles_required
 
-
+from .task import Quiz_alert
 class SubjectsAPI(Resource):
     @auth_required('token')
     def get(self):
@@ -217,12 +217,13 @@ class QuizResource(Resource):
                 db.session.commit()
 
             new_quiz.total_marks = total_marks
-            db.session.commit()
             
+            db.session.commit()
+            Quiz_alert.delay(new_quiz.quiz_id)
             return {'message': 'Quiz created successfully', 'quiz_id': new_quiz.quiz_id}, 200
         except Exception as e:
             db.session.rollback()
-            return {'message': 'An error occurred while creating the quiz', 'error': str(e)}, 500           
+            return {'message': f'An error occurred while creating the quiz {e}',}, 500           
 
 
 

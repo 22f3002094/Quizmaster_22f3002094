@@ -1,5 +1,5 @@
 from flask import current_app as app
-from .models import db,Subject,Chapter
+from .models import db,Subject,Chapter, Role
 from flask_security import SQLAlchemyUserDatastore
 from flask_security import hash_password
 
