@@ -1,0 +1,446 @@
+openapi: 3.0.0
+info:
+  title: Quiz Management API
+  description: API for managing subjects, chapters, and quizzes in an educational system.
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000
+paths:
+  /api/subjects:
+    get:
+      summary: Get all subjects
+      operationId: getSubjects
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: List of subjects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    description:
+                      type: string
+                    id:
+                      type: integer
+    post:
+      summary: Create a new subject
+      operationId: createSubject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        200:
+          description: Subject created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  desc:
+                    type: string
+        409:
+          description: Subject already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /api/chapters:
+    get:
+      summary: Get all chapters or chapters by subject
+      operationId: getChapters
+      parameters:
+        - name: sub_name
+          in: query
+          description: Subject name to filter chapters by.
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: List of chapters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    description:
+                      type: string
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    post:
+      summary: Create a new chapter
+      operationId: createChapter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        200:
+          description: Chapter created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        409:
+          description: Chapter already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /api/quizes:
+    get:
+      summary: Get quizzes either by chapter name or by quiz ID
+      operationId: getQuizzes
+      parameters:
+        - name: id
+          in: query
+          description: Quiz ID to get specific quiz details
+          required: false
+          schema:
+            type: integer
+        - name: ch_name
+          in: query
+          description: Chapter name to filter quizzes by.
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: List of quizzes or quiz details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    date:
+                      type: string
+                      format: date
+                    total_marks:
+                      type: integer
+        404:
+          description: Chapter not found or quiz not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    post:
+      summary: Create a new quiz
+      operationId: createQuiz
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quiz_name:
+                  type: string
+                quiz_date:
+                  type: string
+                  format: date
+                questions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      statement:
+                        type: string
+                      A:
+                        type: string
+                      B:
+                        type: string
+                      C:
+                        type: string
+                      D:
+                        type: string
+                      correct:
+                        type: string
+                      marks:
+                        type: integer
+      responses:
+        200:
+          description: Quiz created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  quiz_id:
+                    type: integer
+        400:
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        404:
+          description: Chapter not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /login:
+    post:
+      summary: User login
+      operationId: userLogin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        200:
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  message:
+                    type: string
+                  name:
+                    type: string
+                  role:
+                    type: string
+        401:
+          description: Incorrect password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /register:
+    post:
+      summary: User registration
+      operationId: userRegister
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                dob:
+                  type: string
+                  format: date
+                qual:
+                  type: string
+      responses:
+        200:
+          description: Successful registration
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        409:
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /first-task:
+    get:
+      summary: Start a test task
+      operationId: startTestTask
+      responses:
+        200:
+          description: Task started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task_id:
+                    type: string
+  /check-first-task/{id}:
+    get:
+      summary: Check the status of the test task
+      operationId: checkTestTaskStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Task ID to check the status
+          schema:
+            type: string
+      responses:
+        200:
+          description: Task status and result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ready:
+                    type: boolean
+                  successful:
+                    type: boolean
+                  result:
+                    type: string
+  /api/admin_export_csv:
+    get:
+      summary: Export data as CSV
+      operationId: exportCsvData
+      responses:
+        200:
+          description: Task started for CSV export
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task_id:
+                    type: string
+  /api/check_admin_export_csv:
+    get:
+      summary: Check the status of the CSV export task
+      operationId: checkCsvExportStatus
+      parameters:
+        - name: taskid
+          in: query
+          required: true
+          description: Task ID to check the status
+          schema:
+            type: string
+      responses:
+        200:
+          description: CSV export file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+       
